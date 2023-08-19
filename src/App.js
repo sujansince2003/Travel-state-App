@@ -20,6 +20,10 @@ const App = () => {
       )
     );
   };
+  const handleClear = () => {
+    const confirmed = window.confirm("Are You Sure want to clear all Lists");
+    if (confirmed) setItems(() => []);
+  };
   useEffect(() => {}, [items]);
   return (
     <>
@@ -30,6 +34,7 @@ const App = () => {
         items={items}
         onDeleteitem={HandleDeleteItem}
         onpackeditem={HandlePackedItem}
+        onclearitem={handleClear}
       />
       <Stats items={items} />
     </>
@@ -85,12 +90,25 @@ const Form = ({ onAddItems }) => {
     </>
   );
 };
-const Packinglist = ({ items, onDeleteitem, onpackeditem }) => {
+const Packinglist = ({ items, onDeleteitem, onpackeditem, onclearitem }) => {
+  const [sortby, setSortby] = useState("input");
+  let sortedItems;
+  if (sortby === "input") sortedItems = items;
+  if (sortby === "description")
+    sortedItems = items
+      .slice()
+      .sort((a, b) => a.description.localeCompare(b.description));
+
+  if (sortby === "packed")
+    sortedItems = items
+      .slice()
+      .sort((a, b) => Number(a.packed) - Number(b.packed));
+
   return (
     <>
       <div className="list">
         <ul>
-          {items.map((item) => (
+          {sortedItems.map((item) => (
             <Item
               item={item}
               onDeleteitem={onDeleteitem}
@@ -99,6 +117,14 @@ const Packinglist = ({ items, onDeleteitem, onpackeditem }) => {
             />
           ))}
         </ul>
+        <div className="actions">
+          <select value={sortby} onChange={(e) => setSortby(e.target.value)}>
+            <option value="input">Sort by input</option>
+            <option value="description">Sort by description</option>
+            <option value="packed">Sort by packed status</option>
+          </select>
+          <button onClick={onclearitem}>Clear List</button>
+        </div>
       </div>
     </>
   );
