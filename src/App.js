@@ -1,45 +1,55 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 
-import "./App.css"
+import "./App.css";
 
 const initialItems = [
   { id: 1, description: "Passports", quantity: 2, packed: false },
   { id: 2, description: "Socks", quantity: 12, packed: true },
-]
+];
 
 const App = () => {
+  const [items, setItems] = useState([]);
+
+  const HandleaddItems = (item) => {
+    setItems((items) => [...items, item]);
+  };
+
   return (
     <>
       <Logo />
-      <Form />
-      <Packinglist />
+      <Form onAddItems={HandleaddItems} />
+      {/* passing function as props to child can execute funtion in parent comp and also can change state */}
+      <Packinglist items={items} />
       <Stats />
     </>
-  )
-}
+  );
+};
 
 const Logo = () => {
   return (
     <>
       <h1>🏝️ Far Away 🚎</h1>
     </>
-  )
-}
-const Form = () => {
-  const [description, setDescription] = useState("")
-  const [quantity, setquantity] = useState(1)
+  );
+};
+const Form = ({ onAddItems }) => {
+  const [description, setDescription] = useState("");
+  const [quantity, setquantity] = useState(1);
 
   const HandleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     //making a object when we receive data from input
-    if (!description) return
-    const newItem = { description, quantity, packed: true, id: 5 }
-    console.log(newItem)
+    if (!description) return;
+    const newItem = { description, quantity, packed: true, id: 5 };
+    console.log(newItem);
+
+    //adding new item to list
+    onAddItems(newItem);
 
     //clearing input fields
-    setDescription("")
-    setquantity(1)
-  }
+    setDescription("");
+    setquantity(1);
+  };
 
   return (
     <>
@@ -57,27 +67,27 @@ const Form = () => {
           placeholder="item..."
           value={description}
           onChange={(e) => {
-            setDescription(() => e.target.value)
+            setDescription(() => e.target.value);
           }}
         />
         <button>Add</button>
       </form>
     </>
-  )
-}
-const Packinglist = () => {
+  );
+};
+const Packinglist = ({ items }) => {
   return (
     <>
       <div className="list">
         <ul>
-          {initialItems.map((item) => (
+          {items.map((item) => (
             <Item item={item} key={item.id} />
           ))}
         </ul>
       </div>
     </>
-  )
-}
+  );
+};
 
 const Item = ({ item }) => {
   return (
@@ -89,8 +99,8 @@ const Item = ({ item }) => {
         ❌
       </li>
     </>
-  )
-}
+  );
+};
 const Stats = () => {
   return (
     <>
@@ -98,7 +108,7 @@ const Stats = () => {
         You have 9 items in your list and you have packed 4 items
       </footer>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
