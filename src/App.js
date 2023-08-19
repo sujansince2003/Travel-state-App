@@ -14,12 +14,16 @@ const App = () => {
     setItems((items) => [...items, item]);
   };
 
+  const HandleDeleteItem = (id) => {
+    setItems((items) => items.filter((item) => item.id !== id));
+  };
+
   return (
     <>
       <Logo />
       <Form onAddItems={HandleaddItems} />
-      {/* passing function as props to child can execute funtion in parent comp and also can change state */}
-      <Packinglist items={items} />
+      {/* passing function as props to child can execute funtion in parent comp and also can change state ::this is how passing data from child to parent */}
+      <Packinglist items={items} onDeleteitem={HandleDeleteItem} />
       <Stats />
     </>
   );
@@ -40,7 +44,7 @@ const Form = ({ onAddItems }) => {
     e.preventDefault();
     //making a object when we receive data from input
     if (!description) return;
-    const newItem = { description, quantity, packed: true, id: 5 };
+    const newItem = { description, quantity, packed: true, id: Date.now() };
     console.log(newItem);
 
     //adding new item to list
@@ -75,13 +79,13 @@ const Form = ({ onAddItems }) => {
     </>
   );
 };
-const Packinglist = ({ items }) => {
+const Packinglist = ({ items, onDeleteitem }) => {
   return (
     <>
       <div className="list">
         <ul>
           {items.map((item) => (
-            <Item item={item} key={item.id} />
+            <Item item={item} onDeleteitem={onDeleteitem} key={item.id} />
           ))}
         </ul>
       </div>
@@ -89,14 +93,20 @@ const Packinglist = ({ items }) => {
   );
 };
 
-const Item = ({ item }) => {
+const Item = ({ item, onDeleteitem }) => {
   return (
     <>
       <li>
         <span style={item.packed ? { textDecoration: "line-through" } : {}}>
           {item.quantity} {item.description}
         </span>
-        ❌
+        <button
+          onClick={() => {
+            onDeleteitem(item.id);
+          }}
+        >
+          ❌
+        </button>
       </li>
     </>
   );

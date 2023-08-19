@@ -1,0 +1,34 @@
+this is created to understand how some topics are working here
+
+form component changing states of items
+
+Yes, the `Form` component can change the state of the `items` array in the `App` component when you pass the `HandleAddItems` function as a prop and use it to update the state. This is because when you pass a function as a prop to a child component, that child component can execute that function, and the function can make changes to the state of the parent component.
+
+In your code, the `Form` component receives the `onAddItems` function as a prop, and this function is responsible for updating the `items` state in the `App` component. The `HandleSubmit` function within the `Form` component is using this `onAddItems` function to add a new item to the `items` state.
+
+Here's how it works step by step:
+
+1. In the `App` component, you define the initial state of `items` using the `useState` hook. Initially, it's an empty array.
+
+2. You define the `HandleAddItems` function in the `App` component, which takes an `item` as an argument and uses the `setItems` function (provided by the `useState` hook) to update the state by adding the new `item` to the existing array of items.
+
+3. You pass the `HandleAddItems` function as a prop named `onAddItems` to the `Form` component.
+
+4. In the `Form` component, when the form is submitted, the `HandleSubmit` function is called. Within this function, you create a new item using the input values, and then you call the `onAddItems` function with this new item as an argument.
+
+5. Since the `onAddItems` function in the `Form` component is actually the `HandleAddItems` function from the `App` component (passed as a prop), calling `onAddItems(newItem)` within the `Form` component will execute the `HandleAddItems` function in the `App` component.
+
+6. This, in turn, updates the `items` state in the `App` component by adding the new item to the existing list of items.
+
+So, in short, the `Form` component can indirectly change the state of the `items` array in the `App` component by utilizing the `onAddItems` function that is passed as a prop.
+
+
+
+............................................
+ when you pass a function from a parent component to a child component as a prop, the child component can execute that function, and if that function is responsible for changing the state of the parent component, then the child component can indirectly change the state of the parent component.
+
+In your provided code, the `Form` component receives the `onAddItems` function as a prop from the `App` component. This function is defined in the `App` component and is responsible for updating the state of the `items` array.
+
+Inside the `Form` component, when the form is submitted, the `HandleSubmit` function is called, and within this function, you're executing the `onAddItems` function by passing in a new item. This effectively triggers the `HandleAddItems` function in the `App` component through the function passed as a prop.
+
+As a result, the `items` array in the `App` component gets updated, and the state changes. So, the `Form` component is able to execute the function of the parent (`App`) and change the state indirectly through the passed prop.
