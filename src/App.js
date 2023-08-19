@@ -20,9 +20,7 @@ const App = () => {
       )
     );
   };
-  useEffect(() => {
-    console.log("Updated items:", items);
-  }, [items]);
+  useEffect(() => {}, [items]);
   return (
     <>
       <Logo />
@@ -33,7 +31,7 @@ const App = () => {
         onDeleteitem={HandleDeleteItem}
         onpackeditem={HandlePackedItem}
       />
-      <Stats />
+      <Stats items={items} />
     </>
   );
 };
@@ -54,7 +52,6 @@ const Form = ({ onAddItems }) => {
     //making a object when we receive data from input
     if (!description) return;
     const newItem = { description, quantity, packed: false, id: Date.now() };
-    console.log(newItem);
 
     //adding new item to list
     onAddItems(newItem);
@@ -130,11 +127,23 @@ const Item = ({ item, onDeleteitem, onpackeditem }) => {
     </>
   );
 };
-const Stats = () => {
+const Stats = ({ items }) => {
+  if (!items.length)
+    return <p className="stats">Start adding items for your trip😍😉</p>;
+  const numItems = items.length;
+  const packedNum = items.filter((pk) => pk.packed).length;
+  const percent = Math.round((packedNum / numItems) * 100);
   return (
     <>
       <footer className="stats">
-        You have 9 items in your list and you have packed 4 items
+        {percent !== 100
+          ? ` You have ${numItems} items in your list and you have packed ${packedNum}
+        items (${percent ? percent : 0}% items packed)
+                 `
+          : "You are Ready to go🤩🥳"}{" "}
+        <p>
+          {percent < 100 ? "Click on the checkboxes to marked as packed" : null}
+        </p>
       </footer>
     </>
   );
