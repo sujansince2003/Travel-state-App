@@ -1,11 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./App.css";
-
-const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: false },
-  { id: 2, description: "Socks", quantity: 12, packed: true },
-];
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -18,12 +13,26 @@ const App = () => {
     setItems((items) => items.filter((item) => item.id !== id));
   };
 
+  const HandlePackedItem = (id) => {
+    setItems((items) =>
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  };
+  useEffect(() => {
+    console.log("Updated items:", items);
+  }, [items]);
   return (
     <>
       <Logo />
       <Form onAddItems={HandleaddItems} />
       {/* passing function as props to child can execute funtion in parent comp and also can change state ::this is how passing data from child to parent */}
-      <Packinglist items={items} onDeleteitem={HandleDeleteItem} />
+      <Packinglist
+        items={items}
+        onDeleteitem={HandleDeleteItem}
+        onpackeditem={HandlePackedItem}
+      />
       <Stats />
     </>
   );
@@ -44,7 +53,7 @@ const Form = ({ onAddItems }) => {
     e.preventDefault();
     //making a object when we receive data from input
     if (!description) return;
-    const newItem = { description, quantity, packed: true, id: Date.now() };
+    const newItem = { description, quantity, packed: false, id: Date.now() };
     console.log(newItem);
 
     //adding new item to list
@@ -79,13 +88,18 @@ const Form = ({ onAddItems }) => {
     </>
   );
 };
-const Packinglist = ({ items, onDeleteitem }) => {
+const Packinglist = ({ items, onDeleteitem, onpackeditem }) => {
   return (
     <>
       <div className="list">
         <ul>
           {items.map((item) => (
-            <Item item={item} onDeleteitem={onDeleteitem} key={item.id} />
+            <Item
+              item={item}
+              onDeleteitem={onDeleteitem}
+              onpackeditem={onpackeditem}
+              key={item.id}
+            />
           ))}
         </ul>
       </div>
@@ -93,10 +107,15 @@ const Packinglist = ({ items, onDeleteitem }) => {
   );
 };
 
-const Item = ({ item, onDeleteitem }) => {
+const Item = ({ item, onDeleteitem, onpackeditem }) => {
   return (
     <>
       <li>
+        <input
+          type="checkbox"
+          value={item.packed}
+          onChange={() => onpackeditem(item.id)}
+        />
         <span style={item.packed ? { textDecoration: "line-through" } : {}}>
           {item.quantity} {item.description}
         </span>
